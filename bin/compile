@@ -6,7 +6,7 @@ echo "-----> Installing $GHOSTSCRIPT_VERSION using build directory $1"
 
 BUILD_DIR=$1
 LOCATION="$BUILD_DIR/vendor/gs"
-PACKAGE="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs922/ghostscript-$GHOSTSCRIPT_VERSION-linux-x86_64.tgz"
+PACKAGE="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${GHOSTSCRIPT_VERSION//./}/ghostscript-$GHOSTSCRIPT_VERSION-linux-x86_64.tgz"
 BINARY="ghostscript-$GHOSTSCRIPT_VERSION-linux-x86_64/gs-${GHOSTSCRIPT_VERSION//./}-linux-x86_64"
 
 cd $BUILD_DIR
