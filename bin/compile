@@ -65,13 +65,9 @@ echo_indent "Verify release"
 
 echo "$RELEASE_SHA512  $RELEASE_PATH" | sha512sum --check - > /dev/null
 
-echo_indent "Extract release"
+tar -xzvf $RELEASE_PATH --strip-components 1 -C $INSTALL_DIR $BINARY
 
-tar -xzvf ghostscript-$RELEASE_VERSION-linux-x86_64.tgz -C "$INSTALL_DIR" $BINARY
-mv $INSTALL_DIR/$BINARY $INSTALL_DIR/gs
-
-folder_to_clean=$(echo $BINARY | cut -d '/' -f1)
-rmdir $INSTALL_DIR/$folder_to_clean
+mv $INSTALL_DIR/$(echo $BINARY | cut -d '/' -f2) $INSTALL_DIR/gs
 
 popd > /dev/null
 
