@@ -1,21 +1,93 @@
-#!/usr/bin/env bash
-# bin/compile <build-dir>
+#!/bin/bash
+
+# reference: https://devcenter.heroku.com/articles/buildpack-api#bin-compile
+
+set -o errexit
+set -o nounset
+
+####################################################################################################
+
+# Update the following values to update the Ghostscript version installed by the buildpack.
+
+RELEASE_VERSION="9.55.0"
+RELEASE_URL="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${RELEASE_VERSION//./}/ghostscript-$RELEASE_VERSION-linux-x86_64.tgz"
+RELEASE_SHA512=6c09c9056a311a5a2144ffe651660c2d2d748115c7f910ddeaa882385818d218d19066aed979179415f408ea5b6d14ace12e05f6ec6ab7c21126a3e2cbc0c596
+BINARY="ghostscript-$RELEASE_VERSION-linux-x86_64/gs-${RELEASE_VERSION//./}-linux-x86_64"
+
+####################################################################################################
+
+indent () {
+  sed -u 's/^/       /'
+}
+
+echo_indent () {
+  echo "$@" | indent
+}
+
+warn_indent () {
+  echo "$@" | indent >&2
+}
+
 BUILD_DIR=$1
-GHOSTSCRIPT_VERSION="$(cat $BUILD_DIR/.ghostscript_version)"
+mkdir -p "$BUILD_DIR"
 
-echo "-----> Installing $GHOSTSCRIPT_VERSION using build directory $BUILD_DIR"
+INSTALL_RELPATH=vendor/gs/bin
+INSTALL_DIR="$1/$INSTALL_RELPATH"
+RUNTIME_DIR="\$HOME/$INSTALL_RELPATH"
+mkdir -p "$INSTALL_DIR"
 
-LOCATION="$BUILD_DIR/vendor/gs"
-PACKAGE="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${GHOSTSCRIPT_VERSION//./}/ghostscript-$GHOSTSCRIPT_VERSION-linux-x86_64.tgz"
-BINARY="ghostscript-$GHOSTSCRIPT_VERSION-linux-x86_64/gs-${GHOSTSCRIPT_VERSION//./}-linux-x86_64"
+PROFILE_DIR="$BUILD_DIR/.profile.d"
+mkdir -p "$PROFILE_DIR"
 
-cd $BUILD_DIR
-mkdir -p $LOCATION/bin
-wget -O gs.tgz $PACKAGE
-tar xvf gs.tgz
-mv $BINARY $LOCATION/bin/gs
+
+####################################################################################################
+
+echo "-----> Install Ghostscript $RELEASE_VERSION"
+
+####################################################################################################
+
+export TMPDIR="$(mktemp -d)"
+
+RELEASE_PATH="$TMPDIR/$(basename "$RELEASE_URL")"
+
+pushd "$TMPDIR" > /dev/null
+
+echo_indent "Download release"
+
+curl \
+  --silent \
+  --show-error \
+  --location \
+  --output "$RELEASE_PATH" \
+  "$RELEASE_URL"
+
+echo_indent "Verify release"
+
+echo "$RELEASE_SHA512  $RELEASE_PATH" | sha512sum --check - > /dev/null
+
+echo_indent "Extract release"
+
+tar -xzvf $RELEASE_PATH/ghostscript-$RELEASE_VERSION-linux-x86_64.tgz -C "$INSTALL_DIR" $BINARY
+mv $INSTALL_DIR/$BINARY $INSTALL_DIR/gs
+
+folder_to_clean=$(echo $BINARY | cut -d '/' -f1)
+rmdir $folder_to_clean
+
+popd > /dev/null
+
+rm -r "$TMPDIR"
 
 echo "-----> Building runtime environment for Ghostscript to $LOCATION"
 
-mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"\$HOME/vendor/gs/bin:\$PATH\"" > $BUILD_DIR/.profile.d/ghostscript.sh
+####################################################################################################
+
+echo_indent "Configure runtime environment variables"
+
+cat >> "$PROFILE_DIR/ghostscript.sh" <<-EOF
+	    export PATH="$RUNTIME_DIR/bin:\$PATH"
+	    export GS_CONFIGURE_PATH="/app/config/gs/"
+EOF
+
+####################################################################################################
+
+echo_indent "Install complete!"
