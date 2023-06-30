@@ -71,7 +71,7 @@ tar -xzvf $RELEASE_PATH/ghostscript-$RELEASE_VERSION-linux-x86_64.tgz -C "$INSTA
 mv $INSTALL_DIR/$BINARY $INSTALL_DIR/gs
 
 folder_to_clean=$(echo $BINARY | cut -d '/' -f1)
-rmdir $folder_to_clean
+rmdir $INSTALL_DIR/$folder_to_clean
 
 popd > /dev/null
 
