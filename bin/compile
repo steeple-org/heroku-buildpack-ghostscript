@@ -77,7 +77,7 @@ popd > /dev/null
 
 rm -r "$TMPDIR"
 
-echo "-----> Building runtime environment for Ghostscript to $LOCATION"
+echo "-----> Building runtime environment for Ghostscript"
 
 ####################################################################################################
 
