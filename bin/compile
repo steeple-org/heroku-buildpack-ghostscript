@@ -81,7 +81,7 @@ echo_indent "Configure runtime environment variables"
 
 cat >> "$PROFILE_DIR/ghostscript.sh" <<-EOF
 	    export PATH="$RUNTIME_DIR/bin:\$PATH"
-	    export GS_CONFIGURE_PATH="/app/config/gs/"
+      export GS_PATH="/app/vendor/gs/bin/gs"
 EOF
 
 ####################################################################################################
