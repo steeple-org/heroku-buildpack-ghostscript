@@ -2,6 +2,8 @@
 
 # reference: https://devcenter.heroku.com/articles/buildpack-api#bin-compile
 
+echo "Ghostscript 9.55.0 - v1"
+
 set -o errexit
 set -o nounset
 
