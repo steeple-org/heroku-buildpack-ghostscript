@@ -77,11 +77,19 @@ echo "-----> Building runtime environment for Ghostscript"
 
 ####################################################################################################
 
+echo_indent "Replace currently installed ghostscript package"
+
+apt remove ghostscript -y
+
+ln -s $RUNTIME_DIR/bin/gs /usr/bin/gs
+
+####################################################################################################
+
 echo_indent "Configure runtime environment variables"
 
 cat >> "$PROFILE_DIR/ghostscript.sh" <<-EOF
-	    export PATH="$RUNTIME_DIR/bin:\$PATH"
-      export GS_PATH="/app/vendor/gs/bin/gs"
+      export PATH="$RUNTIME_DIR/bin:\$PATH"
+      export GS_PATH="$RUNTIME_DIR/bin/gs"
 EOF
 
 ####################################################################################################
