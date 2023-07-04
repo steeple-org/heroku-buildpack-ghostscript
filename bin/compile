@@ -79,9 +79,7 @@ echo "-----> Building runtime environment for Ghostscript"
 
 echo_indent "Replace currently installed ghostscript package"
 
-apt remove ghostscript -y
-
-ln -s $RUNTIME_DIR/bin/gs /usr/bin/gs
+ln -sf $RUNTIME_DIR/bin/gs /usr/bin/gs
 
 ####################################################################################################
 
