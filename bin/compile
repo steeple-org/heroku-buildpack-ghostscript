@@ -9,7 +9,7 @@ set -o nounset
 
 ####################################################################################################
 
-# Update the following values to update the Ghostscript version installed by the buildpack.
+# Update the following values to update the Ghostscript version installed by the buildpack
 
 RELEASE_VERSION="9.55.0"
 RELEASE_URL="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${RELEASE_VERSION//./}/ghostscript-$RELEASE_VERSION-linux-x86_64.tgz"
