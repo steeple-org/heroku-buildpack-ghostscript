@@ -82,7 +82,7 @@ echo "-----> Building runtime environment for Ghostscript"
 echo_indent "Configure runtime environment variables"
 
 cat >> "$PROFILE_DIR/ghostscript.sh" <<-EOF
-      export PATH="$RUNTIME_DIR:$PATH"
+      export PATH="$RUNTIME_DIR:\$PATH"
       export GS_PATH="$RUNTIME_DIR/gs"
 EOF
 
